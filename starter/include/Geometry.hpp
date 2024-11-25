@@ -1,63 +1,50 @@
-/** @file Geometry.hpp
- *  @brief Organizes vertex and triangle information.
- *  
- *  More...
- *
- *  @author Mike
- *  @bug No known bugs.
- */
+// Geometry.hpp
 
 #ifndef GEOMETRY_HPP
 #define GEOMETRY_HPP
 
 #include <vector>
+#include "glm/vec3.hpp"
 
-// Purpose of this class is to store vertice and triangle information
-class Geometry{
+// Purpose of this class is to store vertex and triangle information
+class Geometry
+{
 public:
 	// Constructor
 	Geometry();
 	// Destructor
 	~Geometry();
-	
+
 	// Functions for working with individual vertices
 	unsigned int GetBufferSizeInBytes();
-    // Retrieve the 
 	unsigned int GetBufferDataSize();
-    // Retrieve the Buffer Data Size
-	float* GetBufferDataPtr();
-	// Add a new vertex 
-	void AddVertex(float x, float y, float z, float s, float t);
-    // gen pushes all attributes into a single vector
+	float *GetBufferDataPtr();
+
+	// Add a new vertex
+	void AddVertex(float x, float y, float z, float nx, float ny, float nz);
+
+	// Generates buffer data from stored vertices
 	void Gen();
-	// Functions for working with Indices
-	// Creates a triangle from 3 indices
-	// When a triangle is made, the tangents and bi-tangents are also
-	// computed
-	void MakeTriangle(unsigned int vert0, unsigned int vert1, unsigned int vert2);  
-    // Retrieve how many indices there are
+
+	// Functions for working with indices
+	void MakeTriangle(unsigned int vert0, unsigned int vert1, unsigned int vert2);
 	unsigned int GetIndicesSize();
-    // Retrieve the pointer to the indices
-	unsigned int* GetIndicesDataPtr();
+	unsigned int *GetIndicesDataPtr();
+
+	// Adds an index (for OBJ loader)
+	void AddIndex(unsigned int index);
 
 private:
-	// m_bufferData stores all of the vertexPositons, coordinates, normals, etc.
-	// This is all of the information that should be sent to the vertex Buffer Object
+	// Vertex data components
+	std::vector<float> m_vertexPositions;
+	std::vector<float> m_normals;
+	std::vector<float> m_textureCoords;
+
+	// Combined buffer data
 	std::vector<float> m_bufferData;
 
-    // Individual components of 
-	std::vector<float> m_vertexPositions;
-	std::vector<float> m_textureCoords;
-	std::vector<float> m_normals;
-	std::vector<float> m_tangents;
-	std::vector<float> m_biTangents;
-
-	// The indices for a indexed-triangle mesh
+	// Indices for indexed drawing
 	std::vector<unsigned int> m_indices;
 };
-
-
-
-
 
 #endif

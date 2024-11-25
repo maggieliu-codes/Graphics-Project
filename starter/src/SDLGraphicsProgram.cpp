@@ -92,7 +92,7 @@ SDLGraphicsProgram::SDLGraphicsProgram(int w, int h) : m_screenWidth(w), m_scree
     for (int i = 0; i < 1; ++i)
     {
         Object *temp = new Object;
-        temp->MakeTexturedQuad("brick.ppm");
+        temp->LoadOBJ("../common/objects/bunny_centered.obj", "");
         ObjectManager::Instance().AddObject(temp);
     }
 }
@@ -124,23 +124,19 @@ bool SDLGraphicsProgram::InitGL()
 // Update OpenGL
 void SDLGraphicsProgram::Update()
 {
-    // Rotate brick wall
+    // Rotate the object
     static float rot = 0;
-    rot += 0.01;
-    if (rot > 360)
+    rot += 0.5f;
+    if (rot > 360.0f)
     {
-        rot = 0;
+        rot -= 360.0f;
     }
 
-    // Here we hard-code a giant scene
-    // Yuck, we'll fix this in a future assignment.
-    ObjectManager::Instance().GetObject(0).GetTransform().LoadIdentity();
-    // Push back our wall a bit
-    ObjectManager::Instance().GetObject(0).GetTransform().Translate(0.0f, 0.0f, -8.0f);
-    // Rotate on y-axis
-    ObjectManager::Instance().GetObject(0).GetTransform().Rotate(rot, 0.0f, 1.0f, 0.0f);
-    // Make our wall a little bigger
-    ObjectManager::Instance().GetObject(0).GetTransform().Scale(2.0f, 2.0f, 2.0f);
+    Object &obj = ObjectManager::Instance().GetObject(0);
+    obj.GetTransform().LoadIdentity();
+    obj.GetTransform().Translate(0.0f, -1.0f, -5.0f);
+    obj.GetTransform().Rotate(rot, 0.0f, 1.0f, 0.0f);
+    obj.GetTransform().Scale(1.0f, 1.0f, 1.0f);
 
     // Update all of the objects
     ObjectManager::Instance().UpdateAll(m_screenWidth, m_screenHeight);

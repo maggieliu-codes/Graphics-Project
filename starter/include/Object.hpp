@@ -36,19 +36,17 @@ public:
     ~Object();
     // Load a texture
     void LoadTexture(std::string fileName);
-    // Create a textured quad
-    void MakeTexturedQuad(std::string fileName);
     // Updates and transformations applied to object
     void Update(unsigned int screenWidth, unsigned int screenHeight);
     // How to draw the object
     void Render();
     // Returns an objects transform
     Transform &GetTransform();
+    void LoadOBJ(std::string objFilePath, std::string textureFilePath);
 
 private:
     // Helper method for when we are ready to draw or update our object
     void Bind();
-    void LoadOBJ(std::string objFilePath, std::string textureFilePath);
 
     // Object vertices
     std::vector<GLfloat> m_vertices;

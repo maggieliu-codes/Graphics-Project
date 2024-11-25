@@ -1,5 +1,7 @@
 #include "Object.hpp"
 #include "Error.hpp"
+#include <fstream> // For std::ifstream
+#include <sstream> // For std::istringstream
 
 Object::Object()
 {
@@ -7,53 +9,6 @@ Object::Object()
 
 Object::~Object()
 {
-}
-
-// Initialization of object as a 'quad'
-//
-// This could be called in the constructor or
-// otherwise 'explicitly' called this
-// so we create our objects at the correct time
-void Object::MakeTexturedQuad(std::string fileName)
-{
-
-        // Setup geometry
-        // We are using a new abstraction which allows us
-        // to create triangles shapes on the fly
-        // Position and Texture coordinate
-        m_geometry.AddVertex(-1.0f, -1.0f, 0.0f, 0.0f, 0.0f);
-        m_geometry.AddVertex(1.0f, -1.0f, 0.0f, 1.0f, 0.0f);
-        m_geometry.AddVertex(1.0f, 1.0f, 0.0f, 1.0f, 1.0f);
-        m_geometry.AddVertex(-1.0f, 1.0f, 0.0f, 0.0f, 1.0f);
-
-        // Make our triangles and populate our
-        // indices data structure
-        m_geometry.MakeTriangle(0, 1, 2);
-        m_geometry.MakeTriangle(2, 3, 0);
-
-        // This is a helper function to generate all of the geometry
-        m_geometry.Gen();
-
-        // Create a buffer and set the stride of information
-        // NOTE: How we are leveraging our data structure in order to very cleanly
-        //       get information into and out of our data structure.
-        m_vertexBufferLayout.CreateNormalBufferLayout(m_geometry.GetBufferDataSize(),
-                                                      m_geometry.GetIndicesSize(),
-                                                      m_geometry.GetBufferDataPtr(),
-                                                      m_geometry.GetIndicesDataPtr());
-
-        // Load our actual texture
-        // We are using the input parameter as our texture to load
-        m_textureDiffuse.LoadTexture(fileName.c_str());
-
-        // Load the normal map texture
-        m_normalMap.LoadTexture("normal.ppm");
-
-        // Setup shaders
-        std::string vertexShader = m_shader.LoadShader("./shaders/vert.glsl");
-        std::string fragmentShader = m_shader.LoadShader("./shaders/frag.glsl");
-        // Actually create our shader
-        m_shader.CreateShader(vertexShader, fragmentShader);
 }
 
 // TODO: In the future it may be good to
@@ -82,28 +37,21 @@ void Object::Bind()
 
 void Object::Update(unsigned int screenWidth, unsigned int screenHeight)
 {
-        // Call our helper function to just bind everything
-        Bind();
-        // TODO: Read and understand
-        // For our object, we apply the texture in the following way
-        // Note that we set the value to 0, because we have bound
-        // our texture to slot 0.
-        m_shader.SetUniform1i("u_DiffuseMap", 0);
-        // If we want to load another texture, we assign it to another slot
-        m_shader.SetUniform1i("u_NormalMap", 1);
-        // Here we apply the 'view' matrix which creates perspective.
-        // The first argument is 'field of view'
-        // Then perspective
-        // Then the near and far clipping plane.
-        // Note I cannot see anything closer than 0.1f units from the screen.
-        // TODO: In the future this type of operation would be abstracted away
-        //       in a camera class.
-        m_projectionMatrix = glm::perspective(glm::radians(45.0f), ((float)screenWidth) / ((float)screenHeight), 0.1f, 20.0f);
+        // Bind shaders
+        m_shader.Bind();
+
+        // Set uniform for object color
+        m_shader.SetUniform3f("objectColor", 0.8f, 0.5f, 0.3f); // Set to any color you like
+
+        // Projection matrix
+        m_projectionMatrix = glm::perspective(glm::radians(45.0f),
+                                              ((float)screenWidth) / ((float)screenHeight),
+                                              0.1f, 100.0f);
 
         glm::mat4 viewMatrix = glm::lookAt(
-            glm::vec3(0.0f, 0.0f, 3.0f), // Camera position in world space
-            glm::vec3(0.0f, 0.0f, 0.0f), // Target position (looking towards negative Z)
-            glm::vec3(0.0f, 1.0f, 0.0f)  // Up vector (positive Y)
+            glm::vec3(0.0f, 0.0f, 5.0f), // Camera position
+            glm::vec3(0.0f, 0.0f, 0.0f), // Target position
+            glm::vec3(0.0f, 1.0f, 0.0f)  // Up vector
         );
 
         // Set the uniforms in our current shader
@@ -111,11 +59,9 @@ void Object::Update(unsigned int screenWidth, unsigned int screenHeight)
         m_shader.SetUniformMatrix4fv("projectionMatrix", &m_projectionMatrix[0][0]);
         m_shader.SetUniformMatrix4fv("viewMatrix", &viewMatrix[0][0]);
 
-        // Create a first 'light'
-        // Set in a light source position
-        m_shader.SetUniform3f("lightPos", 0.0f, 0.0f, 0.0f);
-        // Set a view and a vector
-        m_shader.SetUniform3f("viewPos", 0.0f, 0.0f, 0.0f);
+        // Set light and view positions
+        m_shader.SetUniform3f("lightPos", 0.0f, 5.0f, 5.0f);
+        m_shader.SetUniform3f("viewPos", 0.0f, 0.0f, 5.0f);
 }
 
 // Render our geometry
@@ -136,4 +82,116 @@ void Object::Render()
 Transform &Object::GetTransform()
 {
         return m_transform;
+}
+
+void Object::LoadOBJ(std::string objFilePath, std::string textureFilePath)
+{
+        // Open the OBJ file
+        std::ifstream objFile(objFilePath);
+        if (!objFile.is_open())
+        {
+                std::cerr << "Failed to open OBJ file: " << objFilePath << std::endl;
+                return;
+        }
+
+        // Temporary storage
+        std::vector<glm::vec3> positions; // Vertex positions
+        std::vector<glm::vec3> normals;   // Normals
+        std::vector<unsigned int> positionIndices, normalIndices;
+
+        std::string line;
+        while (std::getline(objFile, line))
+        {
+                std::istringstream ss(line);
+                std::string prefix;
+                ss >> prefix;
+
+                if (prefix == "v")
+                {
+                        // Vertex position
+                        glm::vec3 position;
+                        ss >> position.x >> position.y >> position.z;
+                        positions.push_back(position);
+                }
+                else if (prefix == "vn")
+                {
+                        // Normal vector
+                        glm::vec3 normal;
+                        ss >> normal.x >> normal.y >> normal.z;
+                        normals.push_back(normal);
+                }
+                else if (prefix == "f")
+                {
+                        // Face indices
+                        unsigned int posIndex[3], normIndex[3];
+
+                        for (int i = 0; i < 3; ++i)
+                        {
+                                std::string vertexString;
+                                ss >> vertexString;
+
+                                // Replace '//' with ' '
+                                size_t pos = vertexString.find("//");
+                                if (pos != std::string::npos)
+                                {
+                                        vertexString.replace(pos, 2, " ");
+                                }
+                                else
+                                {
+                                        std::cerr << "Error: Unexpected face format in OBJ file." << std::endl;
+                                        return;
+                                }
+
+                                std::istringstream vertexStream(vertexString);
+                                vertexStream >> posIndex[i] >> normIndex[i];
+
+                                positionIndices.push_back(posIndex[i]);
+                                normalIndices.push_back(normIndex[i]);
+                        }
+                }
+        }
+        objFile.close();
+
+        // Create the geometry
+        // Note: OBJ indices start at 1, so we subtract 1 when accessing vectors
+        for (size_t i = 0; i < positionIndices.size(); ++i)
+        {
+                unsigned int posIndex = positionIndices[i] - 1;
+                unsigned int normIndex = normalIndices[i] - 1;
+
+                // Error checking to prevent out-of-bounds access
+                if (posIndex >= positions.size())
+                {
+                        std::cerr << "Position index out of bounds: " << posIndex << std::endl;
+                        continue;
+                }
+
+                if (normIndex >= normals.size())
+                {
+                        std::cerr << "Normal index out of bounds: " << normIndex << std::endl;
+                        continue;
+                }
+
+                glm::vec3 position = positions[posIndex];
+                glm::vec3 normal = normals[normIndex];
+
+                m_geometry.AddVertex(position.x, position.y, position.z,
+                                     normal.x, normal.y, normal.z);
+
+                m_geometry.AddIndex(i);
+        }
+
+        // Generate the geometry
+        m_geometry.Gen();
+
+        // Create vertex buffer layout
+        m_vertexBufferLayout.CreatePositionNormalBufferLayout(m_geometry.GetBufferDataSize(),
+                                                              m_geometry.GetIndicesSize(),
+                                                              m_geometry.GetBufferDataPtr(),
+                                                              m_geometry.GetIndicesDataPtr());
+
+        // Setup shaders
+        std::string vertexShader = m_shader.LoadShader("./shaders/vert.glsl");
+        std::string fragmentShader = m_shader.LoadShader("./shaders/frag.glsl");
+        m_shader.CreateShader(vertexShader, fragmentShader);
 }
