@@ -37,7 +37,8 @@ public:
     // Load a texture
     void LoadTexture(std::string fileName);
     // Updates and transformations applied to object
-    void Update(unsigned int screenWidth, unsigned int screenHeight);
+    void Update(unsigned int screenWidth, unsigned int screenHeight, const glm::mat4 &viewMatrix, const glm::vec3 &cameraPos);
+
     // How to draw the object
     void Render();
     // Returns an objects transform

@@ -95,6 +95,9 @@ SDLGraphicsProgram::SDLGraphicsProgram(int w, int h) : m_screenWidth(w), m_scree
         temp->LoadOBJ("../common/objects/bunny_centered.obj", "");
         ObjectManager::Instance().AddObject(temp);
     }
+
+    // Create an instance of the Camera
+    m_camera.SetCameraEyePosition(0.0f, 0.0f, 5.0f); // Set initial camera position
 }
 
 // Proper shutdown of SDL and destroy initialized objects
@@ -135,11 +138,12 @@ void SDLGraphicsProgram::Update()
     Object &obj = ObjectManager::Instance().GetObject(0);
     obj.GetTransform().LoadIdentity();
     obj.GetTransform().Translate(0.0f, -1.0f, -5.0f);
-    obj.GetTransform().Rotate(rot, 0.0f, 1.0f, 0.0f);
+    // stop the object from rotating, uncomment to make it rotate
+    // obj.GetTransform().Rotate(rot, 0.0f, 1.0f, 0.0f);
     obj.GetTransform().Scale(1.0f, 1.0f, 1.0f);
 
     // Update all of the objects
-    ObjectManager::Instance().UpdateAll(m_screenWidth, m_screenHeight);
+    ObjectManager::Instance().UpdateAll(m_screenWidth, m_screenHeight, m_camera.GetWorldToViewmatrix(), glm::vec3(m_camera.GetEyeXPosition(), m_camera.GetEyeYPosition(), m_camera.GetEyeZPosition()));
 }
 
 // Render
@@ -188,7 +192,7 @@ void SDLGraphicsProgram::Loop()
     SDL_StartTextInput();
 
     // Set the camera speed for how fast we move.
-    float cameraSpeed = 0.05f;
+    float cameraSpeed = 0.5f;
 
     // While application is running
     while (!quit)
@@ -208,7 +212,7 @@ void SDLGraphicsProgram::Loop()
                 // Handle mouse movements
                 int mouseX = e.motion.x;
                 int mouseY = e.motion.y;
-                // Camera::Instance().MouseLook(mouseX, mouseY);
+                m_camera.MouseLook(mouseX, mouseY);
             }
             switch (e.type)
             {
@@ -217,16 +221,16 @@ void SDLGraphicsProgram::Loop()
                 switch (e.key.keysym.sym)
                 {
                 case SDLK_LEFT:
-                    //    Camera::Instance().MoveLeft(cameraSpeed);
+                    m_camera.MoveLeft(cameraSpeed);
                     break;
                 case SDLK_RIGHT:
-                    //    Camera::Instance().MoveRight(cameraSpeed);
+                    m_camera.MoveRight(cameraSpeed);
                     break;
                 case SDLK_UP:
-                    // Camera::Instance().MoveForward(cameraSpeed);
+                    m_camera.MoveForward(cameraSpeed);
                     break;
                 case SDLK_DOWN:
-                    // Camera::Instance().MoveBackward(cameraSpeed);
+                    m_camera.MoveBackward(cameraSpeed);
                     break;
                 case SDLK_RSHIFT:
                     //    Camera::Instance().MoveUp(cameraSpeed);

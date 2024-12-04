@@ -35,7 +35,7 @@ void Object::Bind()
         m_shader.Bind();
 }
 
-void Object::Update(unsigned int screenWidth, unsigned int screenHeight)
+void Object::Update(unsigned int screenWidth, unsigned int screenHeight, const glm::mat4 &viewMatrix, const glm::vec3 &cameraPos)
 {
         // Bind shaders
         m_shader.Bind();
@@ -48,12 +48,6 @@ void Object::Update(unsigned int screenWidth, unsigned int screenHeight)
                                               ((float)screenWidth) / ((float)screenHeight),
                                               0.1f, 100.0f);
 
-        glm::mat4 viewMatrix = glm::lookAt(
-            glm::vec3(0.0f, 0.0f, 5.0f), // Camera position
-            glm::vec3(0.0f, 0.0f, 0.0f), // Target position
-            glm::vec3(0.0f, 1.0f, 0.0f)  // Up vector
-        );
-
         // Set the uniforms in our current shader
         m_shader.SetUniformMatrix4fv("modelTransformMatrix", m_transform.GetTransformMatrix());
         m_shader.SetUniformMatrix4fv("projectionMatrix", &m_projectionMatrix[0][0]);
@@ -62,6 +56,9 @@ void Object::Update(unsigned int screenWidth, unsigned int screenHeight)
         // Set light and view positions
         m_shader.SetUniform3f("lightPos", 0.0f, 5.0f, 5.0f);
         m_shader.SetUniform3f("viewPos", 0.0f, 0.0f, 5.0f);
+
+        // Pass the camera position to the shader
+        m_shader.SetUniform3f("viewPos", cameraPos.x, cameraPos.y, cameraPos.z);
 }
 
 // Render our geometry

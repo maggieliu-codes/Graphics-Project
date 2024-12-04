@@ -13,6 +13,7 @@
 #include <SDL2/SDL.h>
 #else // This works for Mac
 #include <SDL.h>
+#include "Camera.hpp"
 #endif
 
 // The glad library helps setup OpenGL extensions.
@@ -52,6 +53,8 @@ private:
     // OpenGL context
     SDL_GLContext m_openGLContext;
     bool m_wireframeMode = false;
+    // camera
+    Camera m_camera;
 };
 
 #endif
