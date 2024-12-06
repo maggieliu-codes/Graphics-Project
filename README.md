@@ -1,10 +1,10 @@
-*TODO*: Please edit the following information in your final project
+_TODO_: Please edit the following information in your final project
 
-## Title: 
+## Title:
 
-**Edit this line -- Put your 'title' of your project here**
+Toon Shading with Distance Fog
 
-## YouTube/Dropbox/Drive Link: 
+## YouTube/Dropbox/Drive Link:
 
 **Edit this line -- Put your link to your video(Preferably on YouTube) here (see deliverables)**
 
@@ -12,18 +12,20 @@
 
 **Edit this line Put a few screenshots of your project here (see deliverables).**
 
+- Name and partners name(At most teams of 2 folks total)
+  - Team member 1: Donghan Liu (me)
+- How many hours did it take you to complete this final project? 20 hours
+- Did you collaborate or share ideas with any other students/TAs/Professors? No
+- Did you use any external resources?
+  - Note it is fair to utilize some tutorials--cite them here. You **must** add your own personal touch however!
+  - https://www.reddit.com/r/opengl/comments/kghh29/toon_shader/
+  - https://www.youtube.com/watch?v=h15kTY3aWaY
+  - https://vicrucann.github.io/tutorials/osg-shader-fog/
+  - (Optional) What was the most interesting part of the Final Assignment? How could the instructor improve the final project?
 
-* Name and partners name(At most teams of 2 folks total)
-  * Team member 1: *edit this*
-  * Team member 2: *edit this*
-* How many hours did it take you to complete this final project? 
-* Did you collaborate or share ideas with any other students/TAs/Professors?
-* Did you use any external resources? 
-  * Note it is fair to utilize some tutorials--cite them here. You **must** add your own personal touch however!
-  * *edit this*
-  * *edit this*
-  * *edit this*
-  * (Optional) What was the most interesting part of the Final Assignment? How could the instructor improve the final project?
+## Running the Project
+
+Please cd into the folder project_code and simply run `python build.py` and then run `./prog`. It will render a rabbit by default and you can use arrow keys to control the camera to see the distance fog effect. If you want to run other objects in the common folder you can use `./prog ../common/objects/your_chosen_model.obj`.
 
 ### Rubric
 
@@ -41,7 +43,6 @@
     </tr>
   </tbody>
 </table>
-
 
 <table>
   <tbody>
