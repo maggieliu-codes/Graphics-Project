@@ -6,11 +6,15 @@ Toon Shading with Distance Fog
 
 ## YouTube/Dropbox/Drive Link:
 
-**Edit this line -- Put your link to your video(Preferably on YouTube) here (see deliverables)**
+https://drive.google.com/file/d/1JlPyz64-xVlxZvkNFXsAlcqgpQANobE5/view?usp=sharing
 
 ## Screenshots
 
-**Edit this line Put a few screenshots of your project here (see deliverables).**
+Close up:
+![bunny close](bunny_close.png)
+
+Further away:
+![bunny away](bunny_far.png)
 
 - Name and partners name(At most teams of 2 folks total)
   - Team member 1: Donghan Liu (me)
