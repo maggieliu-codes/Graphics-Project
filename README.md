@@ -1,70 +1,155 @@
-_TODO_: Please edit the following information in your final project
+# Toon Shading with Distance Fog
 
-## Title:
+This project demonstrates a stylized "toon" shader combined with a distance fog effect in OpenGL. You can load different OBJ models, navigate around the scene with a simple camera, and observe how objects change with distance and quantized lighting.
 
-Toon Shading with Distance Fog
+---
 
-## YouTube/Dropbox/Drive Link:
+## Table of Contents
 
-https://drive.google.com/file/d/1JlPyz64-xVlxZvkNFXsAlcqgpQANobE5/view?usp=sharing
+1. [Overview](#overview)
+2. [Features](#features)
+3. [Screenshots](#screenshots)
+4. [External Resources](#external-resources)
+5. [Requirements and Dependencies](#requirements-and-dependencies)
+6. [Setup and Installation](#setup-and-installation)
+7. [Running the Project](#running-the-project)
+8. [Usage](#usage)
+9. [Future Improvements](#future-improvements)
+
+---
+
+## Overview
+
+This application renders a 3D model with:
+
+- **Toon (Cel) Shading**: Lighting is quantized into discrete levels, giving objects a cartoonish appearance.
+- **Distance Fog**: Objects gradually fade to a fog color as they move away from the camera.
+
+A default rabbit model (`bunny_centered.obj`) is loaded on startup. The camera can move around via arrow keys, letting you see the combined effects of toon shading and distance fog from various distances.
+
+---
+
+## Features
+
+- **Dynamic OBJ Loading**: Specify which OBJ model to load at runtime (`./prog ../common/objects/some_model.obj`).
+- **Adjustable Toon Shading**: Easily configure the number of quantization levels (e.g., 4, 5, or more).
+- **Distance Fog**: Fog color, start, and end distances can be changed in the fragment shader or via uniforms.
+- **Wireframe Toggle**: Press `W` at runtime to switch between a filled or wireframe rendering mode.
+- **Camera Navigation**: Arrow keys for movement (forward, backward, left, right).
+
+---
 
 ## Screenshots
 
-Close up:
+**Close up:**
 ![bunny close](bunny_close.png)
 
-Further away:
+**Further away:**
 ![bunny away](bunny_far.png)
 
-- Name and partners name(At most teams of 2 folks total)
-  - Team member 1: Donghan Liu (me)
-- How many hours did it take you to complete this final project? 20 hours
-- Did you collaborate or share ideas with any other students/TAs/Professors? No
-- Did you use any external resources?
-  - Note it is fair to utilize some tutorials--cite them here. You **must** add your own personal touch however!
-  - https://www.reddit.com/r/opengl/comments/kghh29/toon_shader/
-  - https://www.youtube.com/watch?v=h15kTY3aWaY
-  - https://vicrucann.github.io/tutorials/osg-shader-fog/
-  - (Optional) What was the most interesting part of the Final Assignment? How could the instructor improve the final project?
+---
+
+## External Resources
+
+- [Toon Shader Discussions on Reddit](https://www.reddit.com/r/opengl/comments/kghh29/toon_shader/)
+- [Toon Shader Tutorial Video](https://www.youtube.com/watch?v=h15kTY3aWaY)
+- [Fog Tutorials & Examples](https://vicrucann.github.io/tutorials/osg-shader-fog/)
+
+---
+
+## Requirements and Dependencies
+
+1. **C++17 (or later) compiler** (e.g., `g++`, `clang++`, etc.).
+2. **[SDL2](https://www.libsdl.org/)**:
+   - Make sure SDL2 is installed on your system.
+   - Typically available via package manager (e.g., `sudo apt-get install libsdl2-dev` on Ubuntu).
+3. **[Python 3](https://www.python.org/)** for the build script (`build.py`).
+4. **[glad](https://glad.dav1d.de/)**: The repository already includes the generated GLAD files if you followed the typical setup.
+5. **CMake** (if your `build.py` relies on a CMake-based build process; some setups just call `g++` directly).
+
+---
+
+## Setup and Installation
+
+1. **Clone this repository**:
+   ```bash
+   git clone https://github.com/maggieliu-codes/Graphics-Project.git
+   ```
+2. **Navigate to the project folder**:
+   ```bash
+   cd project_code
+   ```
+3. **Install SDL2** (if not already installed). For example, on Ubuntu or Debian-based systems:
+   ```
+   sudo apt-get update
+   sudo apt-get install libsdl2-dev
+   ```
+   For other operating systems, please refer to the SDL2 documentation.
+
+---
 
 ## Running the Project
 
-Please cd into the folder project_code and simply run `python build.py` and then run `./prog`. It will render a rabbit by default and you can use arrow keys to control the camera to see the distance fog effect. If you want to run other objects in the common folder you can use `./prog ../common/objects/your_chosen_model.obj`.
+1. **Build**:
+   ```bash
+   python3 build.py
+   ```
+   This will compile the source files and produce an executable named `prog`.
+2. **Execute**:
+   ```bash
+   ./prog
+   ```
+   By default, the rabbit model (`bunny_centered.obj`) is loaded. Use the arrow keys to move the camera and observe the distance fog.
+3. **Loading Other Models**:
 
-### Rubric
+   ```bash
+   ./prog ../common/objects/your_chosen_model.obj
+   ```
 
-**Make sure you read the banned project ideas/APIs in the Readme**
+   Replace `your_chosen_model.obj` with any OBJ file in the `common/objects` directory.
 
-<table>
-  <tbody>
-    <tr>
-      <th>Points</th>
-      <th align="center">Description</th>
-    </tr>
-    <tr>
-      <td>(5%) Project Check-in</td>
-     <td align="left">Did you check-in with the professor or TA during office hours regarding your project at least 2 weeks before the deadline?</td>
-    </tr>
-  </tbody>
-</table>
+---
 
-<table>
-  <tbody>
-    <tr>
-      <th>Points</th>
-      <th align="center">Description</th>
-    </tr>
-    <tr>
-      <td>(25%) Project Completion</td>
-     <td align="left"><ul><li>(10%) Does the project compile and run.</li><li>Is it polished without any bugs (No weird visual artifacts).</li><li>(15%)Did you make a video (ideally 2-3 minutes in length following guidelines given in writeup: introduce your project, show your project, show something technical in code that you can explain.)?</li><li>(5%)Did you add a screenshot of your project to the repository?</li></ul></td>
-    </tr>
-    <tr>
-      <td>(40%) Technical</td>
-      <td align="left"><ul><li>Was the implementation of the project challenging?</li><li>Even if you followed a tutoral, it should not be trivial, and have some personal touch to it.</li><li>Did you have to organize/process a sufficient amount of data?</li><li>Was it clear you consulted some outside resources that go above and beyond the scope of this class</li></ul></td>
-    </tr>
-    <tr>
-      <td>(30%) Creativity</td>
-      <td align="left"><ul><li>How visually appealing is the scene?<ul><li>Note: There should be some 'wow' factor--instructors discretion is used here relative to previous projects.</li></ul></li><li>How original is the project<ul><li>Again, did you enhance a tutorial and do something unique or just go by the book?</li></ul></li></ul></td>
-    </tr>
-  </tbody>
-</table>
+## Usage
+
+- Arrow Keys: Move the camera forward, backward, left, and right.
+- W Key: Toggle wireframe mode.
+- Q Key: Quit the application (if implemented as such).
+- Mouse Movement: Rotates the camera view (currently set up in the code to track mouse motion).
+
+---
+
+### Modifying Toon Shading
+
+Inside the fragment shader (`frag.glsl`):
+
+```glsl
+ float levels = 4.0; // Adjust this to change how many 'bands' of shading exist.
+```
+
+Increasing levels will create smoother transitions; decreasing makes stronger cartoon bands.
+
+### Adjusting Fog Settings
+
+Also in `frag.glsl`:
+
+```glsl
+float fogStart = 5.0;    // Distance where fog starts
+float fogEnd = 20.0;     // Distance where fog is fully opaque
+vec3 fogColor = vec3(0.5, 0.5, 0.5); // Fog color (gray)
+```
+
+Tweak these values for different fog distances and colors.
+
+---
+
+## Future Improvements
+
+- GUI Sliders for adjusting levels, fogStart, fogEnd, and fogColor in real time.
+- Animated Model or multiple objects with different shaders.
+- Implement a skybox or environment mapping to enhance scene realism.
+- Add stencils or outlines for stronger cartoon edges.
+
+---
+
+### Happy Rendering!

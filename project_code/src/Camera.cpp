@@ -31,10 +31,6 @@ void Camera::MouseLook(int mouseX, int mouseY)
     glm::vec3 rightVector = glm::cross(m_viewDirection, m_upVector);
     m_viewDirection = glm::rotate(m_viewDirection, glm::radians(mouseDelta.y), rightVector);
 
-    std::cout << "m_viewDirection.x: " << m_viewDirection.x << std::endl;
-    std::cout << "m_viewDirection.y: " << m_viewDirection.y << std::endl;
-    std::cout << "m_viewDirection.z: " << m_viewDirection.z << std::endl;
-
     // Update our old position after we have made changes
     m_oldMousePosition = newMousePosition;
 }

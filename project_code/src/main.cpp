@@ -1,8 +1,3 @@
-// main.cpp
-// Support Code written by Michael D. Shah
-// Last Updated: 6/10/21
-// Please do not redistribute without asking permission.
-
 // Functionality that we created
 #include "SDLGraphicsProgram.hpp"
 
