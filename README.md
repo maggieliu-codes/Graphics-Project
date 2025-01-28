@@ -73,7 +73,7 @@ A default rabbit model (`bunny_centered.obj`) is loaded on startup. The camera c
 
 1. **Clone this repository**:
    ```bash
-   git clone https://github.com/maggieliu-codes/Graphics-Project.git
+   git clone https://github.com/maggieliu-codes/OpenGL-Toon-Shading-Fog.git
    ```
 2. **Navigate to the project folder**:
    ```bash
